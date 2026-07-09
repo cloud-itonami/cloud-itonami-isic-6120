@@ -1,0 +1,11 @@
+{:itonami.blueprint/id "cloud-itonami-6120"
+ :itonami.blueprint/name "Community Mobile Network Infrastructure Operations"
+ :itonami.blueprint/isic-rev5 "6120"
+ :itonami.blueprint/domain :communication/wireless-network-operator
+ :itonami.blueprint/license "AGPL-3.0-or-later"
+ :itonami.blueprint/social-impact [:connectivity :digital-inclusion :spectrum-stewardship]
+ :itonami.blueprint/governor :mobile-network-governor
+ :itonami.blueprint/robotics true
+ :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :phone]
+ :itonami.blueprint/optional-technologies [:optimization]
+ :itonami.blueprint/status :public-oss}
