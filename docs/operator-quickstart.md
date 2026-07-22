@@ -20,10 +20,10 @@ cd cloud-itonami-isic-6120
 ## 2. Run tests
 
 ```bash
-clojure -M:test
+clojure -M:dev:test
 ```
 
-Expect green if maturity is `unknown`. Fix failures before operating.
+Expect green (49 tests / 183 assertions). Fix failures before operating.
 
 ## 3. Open the product face
 
@@ -36,7 +36,7 @@ Publish: enable GitHub Pages on `main` `/docs`, or any static host.
 ## 4. Where the Governor sits
 
 - Blueprint governor key: `mobile-network-governor`
-- Likely source path: `src/**/mobile-network-governor.cljc`
+- Source path: `src/wirelesstelecom/governor.cljc` (ns `wirelesstelecom.governor`)
 - Pattern: advise → govern → phase-gate → commit | escalate | hold (itonami actor / ADR-2607011000)
 
 ## 5. Claim / go-live
