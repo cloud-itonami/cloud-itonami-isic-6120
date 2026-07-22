@@ -2,8 +2,19 @@
 
 ## Status
 
-Accepted. `cloud-itonami-isic-6120` promoted from `:blueprint` to
-`:implemented` in the `kotoba-lang/industry` registry.
+Superseded in part by
+[ADR-0002](0002-site-spectrum-scope-correction.md) (2026-07-23):
+Decisions 1, 3, 4, 5, 9 and 10 below described a design that mirrored
+the wrong sibling actor and are no longer the implementation this repo
+ships. Decisions 2, 6, 7, 8 and 11 (the negative-actuation-pattern
+observation, the dedicated-boolean guard discipline, the Store
+protocol/MemStore+DatomicStore parity approach, the Phase 0→3 rollout
+shape, and the `blueprint.edn` id fix) remain accurate general
+statements about this fleet's conventions and are preserved for
+history. `cloud-itonami-isic-6120` remains promoted from `:blueprint`
+to `:implemented` in the `kotoba-lang/industry` registry; see
+`blueprint.edn`'s `:itonami.blueprint/implemented-slice` for the
+current, accurate description of what ships.
 
 ## Context
 

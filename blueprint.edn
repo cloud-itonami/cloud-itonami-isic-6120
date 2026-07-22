@@ -9,4 +9,66 @@
  :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :phone]
  :itonami.blueprint/optional-technologies [:optimization]
  :itonami.blueprint/status :public-oss
- :itonami.blueprint/maturity :implemented}
+ :itonami.blueprint/maturity :implemented
+ :itonami.blueprint/implemented-slice
+ "Network Operations Advisor ⊣ Mobile Network Governor, langgraph-clj
+ StateGraph (langgraph.graph, wirelesstelecom.operation/build),
+ append-only audit ledger (wirelesstelecom.store/ledger +
+ append-ledger!, MemStore and a DatomicStore backed by langchain.db via
+ langchain-store.core). Compiled StateGraph
+ (:intake -> :advise -> :govern -> :decide -+-> :commit /
+ :request-approval -> :commit / :hold) with
+ `interrupt-before #{:request-approval}` + in-memory checkpointer for
+ real human-in-the-loop resume, proven end-to-end by
+ `test/wirelesstelecom/operation_test.cljc`. The primary entity is a
+ registered SITE (cell tower / base station), analogous to a field in
+ the sibling tobacco-growing coordinator (cloud-itonami-isic-0115) --
+ the reference template this build follows -- carrying a structural
+ `:spectrum-license-status` and `:site-access-record`. Seven ops, all
+ `:effect :propose` only: `:log-network-build-record` (robotics-
+ assisted tower/base-station deployment or maintenance record),
+ `:schedule-site-operation`, `:activate-tower` (HARD: the site's OWN
+ recorded spectrum-license-status must be :active), `:provision-
+ subscriber` (HARD: the site's OWN recorded site-access-record must be
+ present), `:log-billing-record` (HARD: usage-evidence must be cited),
+ `:flag-network-fault` (ALWAYS escalates to a human network operator --
+ covers equipment failure/interference/structural concerns and the
+ safety-critical out-of-band/tower-climb/high-voltage site work this
+ repo's own README names), and `:order-equipment` (cost-threshold
+ escalation). Two permanently blocked ops (`:operate-tower-equipment`,
+ `:finalize-spectrum-license-decision`) -- direct radio/tower-equipment
+ actuation and spectrum-license grant/renewal/revocation decisions stay
+ categorically outside this back-office coordinator's authority, no
+ override. 49 tests / 183 assertions green (`clojure -M:dev:test`),
+ clj-kondo 0 errors, demo runnable end-to-end against both Store
+ backends (`clojure -M:dev:run`).
+
+ CORRECTION HISTORY (see `docs/adr/0002-site-spectrum-scope-
+ correction.md`): an earlier same-day implementation attempt on this
+ repo (i) mirrored the WRONG sibling actor 'op-for-op' -- its own
+ ADR-0001 Decision 1 states it copied `cloud-itonami-isic-6190` (the
+ VoIP/reseller sibling that this repo's own README explicitly
+ distinguishes itself from: 6190 'does not own spectrum or network
+ infrastructure') -- producing a subscriber-identity/MSISDN-
+ provisioning model with ZERO site/tower/spectrum-license-status/
+ robotics modeling despite this blueprint's own `:robotics true` and
+ README `Robotics premise` paragraph; and (ii) fabricated jurisdiction-
+ specific regulatory citations (a Japanese Radio Act / MIC citation, a
+ US Communications Act of 1934 / FCC citation, a UK Wireless Telegraphy
+ Act / Ofcom citation, a German TKG / Bundesnetzagentur citation) in
+ `wirelesstelecom.facts` that were NOT present anywhere in this repo's
+ own pre-existing published docs and were not independently verified.
+ It also had a broken `deps.edn` (stale, no-longer-existing
+ `com-junkawasaki/langgraph-clj`/`langchain-clj` paths), hand-rolled its
+ own EDN-blob codec instead of using `kotoba-lang/langchain-store`
+ (ADR-2607141600), and had no CI workflow and no test that ever
+ exercised the compiled StateGraph end-to-end. This implemented-slice
+ replaces that attempt: `wirelesstelecom.facts` now carries only
+ structural, non-jurisdiction-specific reference data (build-status
+ vocabulary, equipment-procurement categories, site-operation-type
+ reference set); the site/spectrum-license/site-access domain layer
+ that was the actual differentiator is now implemented; `deps.edn`
+ points at the current `kotoba-lang/langgraph`/`langchain`/
+ `langchain-store`; the Store uses `langchain-store.core`; CI
+ (`.github/workflows/ci.yml`, sibling-checkout pattern) and
+ `test/wirelesstelecom/operation_test.cljc` are added."}

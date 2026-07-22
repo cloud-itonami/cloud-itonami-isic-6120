@@ -1,81 +1,115 @@
 (ns wirelesstelecom.sim
-  "Demo driver -- `clojure -M:dev:run`. Walks a clean line through
-  intake -> identity verification -> spectrum-license-dispute
-  screening -> MSISDN-provisioning proposal (always escalates) ->
-  human approval -> commit, then through service-suspension proposal
-  (always escalates) -> human approval -> commit, then shows five HARD
-  holds (a jurisdiction with no spec-basis, a malformed MSISDN, an
-  unresolved spectrum-license dispute screened directly via
-  `:license/screen` [never via an actuation op against an unscreened
-  line -- see this actor's own governor ns docstring / the lesson
-  `telecom.governor`'s own ns docstring (`cloud-itonami-isic-6190`)
-  records], and a double MSISDN-provisioning/service-suspension of an
-  already-processed line) that never reach a human at all, and prints
-  the audit ledger + the draft MSISDN-provisioning and
-  service-suspension records."
+  "Demo driver -- `clojure -M:dev:run`. Walks a registered site through
+  a clean phase-3 auto-commit, an always-escalate network-fault flag
+  (human approves), a high-cost equipment order (human rejects), a
+  structural spectrum-license hard hold (tower activation against a
+  non-active license), a structural site-access hard hold (subscriber
+  provisioning without an on-file site-access record), and a hard hold
+  (unregistered site), then prints the resulting audit ledger. Mirrors
+  `tobaccoops.sim` (cloud-itonami-isic-0115)."
   (:require [langgraph.graph :as g]
-            [wirelesstelecom.store :as store]
-            [wirelesstelecom.operation :as op]))
+            [wirelesstelecom.operation :as operation]
+            [wirelesstelecom.store :as store]))
 
-(def operator {:actor-id "op-1" :actor-role :network-operator :phase 3})
+(def operator {:actor-id "netops-01" :role :network-operator :phase :phase-3})
 
-(defn- exec! [actor tid request context]
+(defn- exec-op [actor tid request context]
   (g/run* actor {:request request :context context} {:thread-id tid}))
 
 (defn- approve! [actor tid]
-  (g/run* actor {:approval {:status :approved :by "op-1"}} {:thread-id tid :resume? true}))
+  (g/run* actor {:approval {:status :approved :by "netops-01"}}
+          {:thread-id tid :resume? true}))
 
-(defn -main [& _]
-  (let [db (store/seed-db)
-        actor (op/build db)]
-    (println "== line/intake line-1 (JPN, clean; valid MSISDN, no license dispute) ==")
-    (println (exec! actor "t1" {:op :line/intake :subject "line-1"
-                                :patch {:id "line-1" :holder-name "Sakura Mobile Co-op"}} operator))
+(defn- reject! [actor tid]
+  (g/run* actor {:approval {:status :rejected :by "netops-01"}}
+          {:thread-id tid :resume? true}))
 
-    (println "== identity/verify line-1 (escalates -- human approves) ==")
-    (println (exec! actor "t2" {:op :identity/verify :subject "line-1"} operator))
-    (println (approve! actor "t2"))
+(defn demo
+  "Run the compiled StateGraph through a commit path, an
+  escalate->approve->commit path, an escalate->reject->hold path, and
+  three hard-hold paths (unregistered site, inactive spectrum license,
+  missing site-access record); print each result and the final audit
+  ledger."
+  []
+  (let [st (store/mem-store
+            {:initial-sites
+             {"site-001"
+              {:id "site-001"
+               :name "North Ridge Tower"
+               :spectrum-license-status :active
+               :site-access-record true}
+              "site-002"
+              {:id "site-002"
+               :name "Harbor District Tower (license renewal pending)"
+               :spectrum-license-status :pending
+               :site-access-record true}
+              "site-003"
+              {:id "site-003"
+               :name "West Valley Tower (site-access not yet secured)"
+               :spectrum-license-status :active
+               :site-access-record false}}})
+        actor (operation/build st)]
 
-    (println "== license/screen line-1 (clean; escalates -- human approves) ==")
-    (println (exec! actor "t3" {:op :license/screen :subject "line-1"} operator))
-    (println (approve! actor "t3"))
+    (println "=== Mobile Network Infrastructure Operations Coordinator Demo ===")
 
-    (println "== actuation/provision-msisdn line-1 (always escalates -- actuation/provision-msisdn) ==")
-    (let [r (exec! actor "t4" {:op :actuation/provision-msisdn :subject "line-1"} operator)]
+    (println "\n== log-network-build-record site-001 (phase-3, governor-clean -> commit) ==")
+    (println (exec-op actor "t1"
+                      {:op :log-network-build-record :site-id "site-001"
+                       :equipment-count 3 :build-status "operational"
+                       :build-type "deployment"}
+                      operator))
+
+    (println "\n== flag-network-fault site-001 (ALWAYS escalates -- network operator approves) ==")
+    (let [r (exec-op actor "t2"
+                     {:op :flag-network-fault :site-id "site-001"
+                      :concern "RFインターフェアランスの可能性"}
+                     operator)]
       (println r)
-      (println "-- human network operator approves --")
-      (println (approve! actor "t4")))
+      (println "-- network operator approves --")
+      (println (approve! actor "t2")))
 
-    (println "== actuation/suspend-service line-1 (always escalates -- actuation/suspend-service) ==")
-    (let [r (exec! actor "t5" {:op :actuation/suspend-service :subject "line-1"} operator)]
+    (println "\n== order-equipment site-001 over cost threshold (escalates -- operator rejects) ==")
+    (let [r (exec-op actor "t3"
+                     {:op :order-equipment :site-id "site-001"
+                      :category "backhaul-equipment" :cost 2500}
+                     operator)]
       (println r)
-      (println "-- human network operator approves --")
-      (println (approve! actor "t5")))
+      (println "-- operator rejects --")
+      (println (reject! actor "t3")))
 
-    (println "== identity/verify line-2 (no spec-basis -> HARD hold) ==")
-    (println (exec! actor "t6" {:op :identity/verify :subject "line-2" :no-spec? true} operator))
+    (println "\n== activate-tower site-002 (spectrum-license-status :pending, not :active -> HARD hold) ==")
+    (println (exec-op actor "t4"
+                      {:op :activate-tower :site-id "site-002"}
+                      operator))
 
-    (println "== identity/verify line-3 (escalates -- human approves; sets up the malformed-MSISDN test) ==")
-    (println (exec! actor "t7" {:op :identity/verify :subject "line-3"} operator))
-    (println (approve! actor "t7"))
+    (println "\n== provision-subscriber site-003 (site-access-record false -> HARD hold) ==")
+    (println (exec-op actor "t5"
+                      {:op :provision-subscriber :site-id "site-003"
+                       :subscriber-ref "sub-778" :service-type "voice-data"}
+                      operator))
 
-    (println "== actuation/provision-msisdn line-3 (\"0312345678\" is not valid MSISDN/E.164 -> HARD hold) ==")
-    (println (exec! actor "t8" {:op :actuation/provision-msisdn :subject "line-3"} operator))
+    (println "\n== activate-tower site-001 (spectrum-license-status :active -> commits) ==")
+    (println (exec-op actor "t6"
+                      {:op :activate-tower :site-id "site-001"}
+                      operator))
 
-    (println "== license/screen line-4 (unresolved -> HARD hold, never reaches a human) ==")
-    (println (exec! actor "t9" {:op :license/screen :subject "line-4"} operator))
+    (println "\n== log-network-build-record site-999 (unregistered -> HARD hold, no interrupt) ==")
+    (println (exec-op actor "t7"
+                      {:op :log-network-build-record :site-id "site-999"
+                       :equipment-count 2 :build-status "planned"}
+                      operator))
 
-    (println "== actuation/provision-msisdn line-1 AGAIN (double-provisioning -> HARD hold) ==")
-    (println (exec! actor "t10" {:op :actuation/provision-msisdn :subject "line-1"} operator))
+    (println "\n== audit ledger ==")
+    (doseq [f (store/ledger st)] (println f))
 
-    (println "== actuation/suspend-service line-1 AGAIN (double-suspension -> HARD hold) ==")
-    (println (exec! actor "t11" {:op :actuation/suspend-service :subject "line-1"} operator))
+    {:ledger (store/ledger st)}))
 
-    (println "== audit ledger ==")
-    (doseq [f (store/ledger db)] (println f))
+(defn -main
+  "clojure -M:run entrypoint."
+  [& _args]
+  (demo))
 
-    (println "== draft MSISDN-provisioning records ==")
-    (doseq [r (store/provisioning-history db)] (println r))
-
-    (println "== draft service-suspension records ==")
-    (doseq [r (store/suspension-history db)] (println r))))
+(comment
+  ;; In a real REPL:
+  (demo)
+  )
