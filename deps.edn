@@ -16,7 +16,15 @@
  ;; (the shared store seam -- EDN-blob codec + identity schema + event-log
  ;; helpers, ADR-2607141600) is added so `wirelesstelecom.store` stops
  ;; hand-rolling its own enc/dec.
- :deps {io.github.kotoba-lang/langgraph
+ ;; `jp-go-digital-design-system` (DADS -- デジタル庁デザインシステム) is
+ ;; the workspace-wide base design system (CLAUDE.md "UI/UX 標準"); it is
+ ;; pinned by git sha rather than :local/root because the generated
+ ;; `docs/samples/operator-console.html` must be reproducible outside
+ ;; this monorepo checkout too.
+ :deps {io.github.kotoba-lang/jp-go-digital-design-system
+        {:git/url "https://github.com/kotoba-lang/jp-go-digital-design-system"
+         :git/sha "83db99546eabc53613ae826ea41d1533a3c574af"}
+        io.github.kotoba-lang/langgraph
         {:local/root "../../kotoba-lang/langgraph"}
         io.github.kotoba-lang/langchain-store
         {:local/root "../../kotoba-lang/langchain-store"}}
@@ -27,6 +35,10 @@
          {:local/root "../../kotoba-lang/langchain"}}}
   ;; clojure -M:dev:run  -> drive the demo through one OperationActor
   :run {:main-opts ["-m" "wirelesstelecom.sim"]}
+  ;; clojure -M:dev:render-html [out-file] -> regenerate
+  ;; docs/samples/operator-console.html by driving the REAL actor stack
+  ;; (operation -> governor -> phase -> store). Flagship checklist item 2.
+  :render-html {:main-opts ["-m" "wirelesstelecom.render-html"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
