@@ -27,6 +27,12 @@
       `wirelesstelecom.facts`; the op allowlist, blocked ops,
       always-escalate ops and the confidence floor from
       `wirelesstelecom.governor`
+    - the ONLY authored component is `rogue-advisor` (step `h10`), a
+      deliberately broken advisor injected through the public
+      `operation/build` `:advisor` seam to reach the `:no-execution`
+      rule the shipped mock advisor cannot trigger. It is an INPUT
+      (a fault to be censored), never an output -- the resulting hold
+      is the real Governor's own verdict.
 
   Deterministic by construction: no clock reads, no randomness, no
   reliance on map iteration order (every collection rendered is either
@@ -43,6 +49,7 @@
             [clojure.string :as str]
             [jp-go-dds.skin]
             [langgraph.graph :as g]
+            [wirelesstelecom.advisor :as advisor]
             [wirelesstelecom.facts :as facts]
             [wirelesstelecom.governor :as governor]
             [wirelesstelecom.operation :as operation]
@@ -80,6 +87,34 @@
 (def ^:private approved {:status :approved :by "netops-01"})
 (def ^:private rejected {:status :rejected :by "netops-01"})
 
+(def ^:private rogue-advisor
+  "A deliberately MALFUNCTIONING advisor, injected over the SAME store
+  through the `:advisor` seam `wirelesstelecom.operation/build` already
+  exposes. It claims `:effect :actuate` -- a real-world actuation --
+  which the shipped `wirelesstelecom.advisor/mock-advisor` can never
+  emit (every one of its branches hard-codes `:effect :propose`).
+
+  Without this injection the Governor's `:no-execution` rule is
+  structurally unreachable, and the console could only claim in prose
+  that the rule exists. Injecting a broken advisor is the only honest
+  way to DEMONSTRATE it: the proposal targets `site-001` (registered)
+  and carries neither `:equipment-count` nor `:build-status`, so the
+  other eight checks stay silent and `:no-execution` is the sole
+  violation -- the hold is attributable to this rule and nothing else.
+
+  This is the defense-in-depth claim the whole actor rests on: a
+  compromised, hallucinating or simply buggy intelligence layer gains
+  no authority, because the Governor re-derives the verdict from the
+  proposal rather than trusting it."
+  (reify advisor/Advisor
+    (-advise [_ _ request]
+      {:op         (:op request)
+       :effect     :actuate
+       :value      {:site-id (:site-id request)}
+       :cites      ["operator-submitted-site-data"]
+       :summary    "ROGUE advisor: 実世界の作動（:effect :actuate）を主張する提案"
+       :confidence 0.99})))
+
 (def ^:private scenario
   "The scenario, as data, so the rendered run table IS the scenario --
   no second hand-maintained description to drift out of sync.
@@ -88,10 +123,15 @@
   human-approved escalations (always-escalate network fault, and a
   category-threshold cost escalation); a human-REJECTED escalation; both
   phase-gate escalation reasons (`:phase-0-simulation-only`,
-  `:phase-1-always-escalate`); and eight of this Governor's nine hard
-  rules. (The ninth, `:no-execution`, is unreachable through the shipped
-  `wirelesstelecom.advisor/mock-advisor`, which always emits
-  `:effect :propose` -- see the coverage note rendered on the page.)"
+  `:phase-1-always-escalate`); and ALL NINE of this Governor's hard
+  rules.
+
+  The ninth, `:no-execution`, is unreachable through the shipped
+  `wirelesstelecom.advisor/mock-advisor` (every branch of which
+  hard-codes `:effect :propose`), so step `h10` injects `rogue-advisor`
+  over the SAME store through the `:advisor` seam
+  `wirelesstelecom.operation/build` already exposes. That is the only
+  honest way to demonstrate the rule rather than assert it in prose."
   [;; -- clean phase-3 lifecycle on site-001 -----------------------------
    {:tid "s01" :context netops-3
     :note "登録済みサイトの建設記録ログ（governor clean → 自動コミット）"
@@ -175,7 +215,10 @@
     :request {:op :finalize-spectrum-license-decision :site-id "site-001"}}
    {:tid "h09" :context netops-3
     :note "クローズド allowlist 外の op"
-    :request {:op :dispatch-drone-survey :site-id "site-001"}}])
+    :request {:op :dispatch-drone-survey :site-id "site-001"}}
+   {:tid "h10" :context netops-3 :advisor :rogue
+    :note "故障/侵害された advisor が :effect :actuate を主張（rogue advisor を同一 store に注入）"
+    :request {:op :log-network-build-record :site-id "site-001"}}])
 
 ;; ----------------------------- running the real actor -----------------------------
 
@@ -186,8 +229,9 @@
   Captures the real `run*` results plus exactly which ledger facts this
   step appended, so the page can distinguish 'held without ever reaching
   a human' from 'a human said no'."
-  [st actor {:keys [tid context request approval note]}]
-  (let [before  (count (store/ledger st))
+  [st actors {:keys [tid context request approval note advisor]}]
+  (let [actor   (get actors (or advisor :mock))
+        before  (count (store/ledger st))
         result  (g/run* actor {:request request :context context} {:thread-id tid})
         resumed (when (and approval (= :interrupted (:status result)))
                   (g/run* actor {:approval approval}
@@ -196,6 +240,7 @@
     {:tid           tid
      :note          note
      :context       context
+     :advisor       (or advisor :mock)
      :request       request
      :approval      approval
      :interrupted?  (= :interrupted (:status result))
@@ -213,10 +258,12 @@
   (needed to tell a hard hold from a human rejection, and to see where
   an approver's id does or doesn't survive)."
   []
-  (let [st    (store/mem-store {:initial-sites (into {} seed-sites)})
-        actor (operation/build st)]
+  (let [st     (store/mem-store {:initial-sites (into {} seed-sites)})
+        ;; Same store, same checkpointer seam -- ONLY the advisor differs.
+        actors {:mock  (operation/build st)
+                :rogue (operation/build st {:advisor rogue-advisor})}]
     {:store st
-     :runs  (mapv #(exec-step! st actor %) scenario)}))
+     :runs  (mapv #(exec-step! st actors %) scenario)}))
 
 ;; ----------------------------- derivations -----------------------------
 
@@ -375,6 +422,9 @@
               rules (run-rules r)]]
     (row (code (:tid r))
          (esc (kw (get-in r [:context :phase])))
+         (if (= :rogue (:advisor r))
+           (cls "critical" "rogue (注入)")
+           (cls "muted" "mock"))
          (code (kw (get-in r [:request :op])))
          (code (get-in r [:request :site-id]))
          (cls (case k :auto "ok" :approved "ok" :rejected "warn"
@@ -478,7 +528,7 @@
       (str "各行は実際の <code>langgraph.graph/run*</code> の戻り値から導出している。"
            "「HARD hold」は graph が <code>:request-approval</code> で一度も割り込まなかった実行 "
            "＝ 人間に到達しなかったホールドを意味する。")
-      (table ["thread" "phase" "op" "site" "結果" "gate reason" "発火ルール" "説明"]
+      (table ["thread" "phase" "advisor" "op" "site" "結果" "gate reason" "発火ルール" "説明"]
              (run-rows runs)))
 
      (section
@@ -552,9 +602,20 @@
      "実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。"
      "本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない"
      "（<code>docs/business-model.md</code> Trust Controls）。</p>\n"
-     "  <p>Governor の HARD ルールのうち <code>:no-execution</code> はこの実行では発火していない："
-     "同梱の <code>wirelesstelecom.advisor/mock-advisor</code> が常に <code>:effect :propose</code> を"
-     "返すため、mock advisor 経由では構造的に到達できない（実 LLM advisor を挿した時に効くガード）。</p>\n"
+     "  <p>"
+     (if (some #{:no-execution} rules)
+       (str "Governor の HARD ルール <code>:no-execution</code> は、同梱の "
+            "<code>wirelesstelecom.advisor/mock-advisor</code> が全分岐で "
+            "<code>:effect :propose</code> を返すため通常経路では構造的に到達できない。"
+            "この実行では <code>operation/build</code> が公開している <code>:advisor</code> シームから、"
+            "<code>:effect :actuate</code>（実世界の作動）を主張する rogue advisor を"
+            "<strong>同一 store に注入</strong>して実際に発火させている（thread <code>h10</code>）。"
+            "故障・侵害・幻覚した intelligence 層が権限を得られないことを、"
+            "散文の主張ではなく実行結果として示すための唯一の誠実な方法である。")
+       (str "Governor の HARD ルール <code>:no-execution</code> はこの実行では発火していない："
+            "同梱の <code>wirelesstelecom.advisor/mock-advisor</code> が常に <code>:effect :propose</code> を"
+            "返すため、mock advisor 経由では構造的に到達できない（実 LLM advisor を挿した時に効くガード）。"))
+     "</p>\n"
      "</footer>\n"
      "</body>\n</html>\n")))
 

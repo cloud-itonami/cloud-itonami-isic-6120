@@ -2480,15 +2480,15 @@ img,svg { max-width: 100%; height: auto; }</style>
 <main>
   <section class="card">
     <h2>この実行の要約</h2>
-    <p class="muted">このページはビルド時に生成される。<code>wirelesstelecom.render-html/run-demo!</code> が 実際にコンパイル済み StateGraph を 20 回走らせ、その結果だけを描画している。手書きの数値・状態・ID は 1 つも無い。</p>
+    <p class="muted">このページはビルド時に生成される。<code>wirelesstelecom.render-html/run-demo!</code> が 実際にコンパイル済み StateGraph を 21 回走らせ、その結果だけを描画している。手書きの数値・状態・ID は 1 つも無い。</p>
     <table>
       <thead><tr><th>指標</th><th>値</th></tr></thead>
       <tbody>
-        <tr><td>シナリオ実行数（1 実行 = 1 StateGraph run）</td><td><span class="num">20</span></td></tr>
-        <tr><td>台帳ファクト総数</td><td><span class="num">20</span></td></tr>
+        <tr><td>シナリオ実行数（1 実行 = 1 StateGraph run）</td><td><span class="num">21</span></td></tr>
+        <tr><td>台帳ファクト総数</td><td><span class="num">21</span></td></tr>
         <tr><td>コミット済みファクト</td><td><span class="num">10</span></td></tr>
-        <tr><td>HARD ホールド（人間に到達しない）</td><td><span class="critical">9</span></td></tr>
-        <tr><td>発火した HARD ルール種別</td><td><span class="num">8</span></td></tr>
+        <tr><td>HARD ホールド（人間に到達しない）</td><td><span class="critical">10</span></td></tr>
+        <tr><td>発火した HARD ルール種別</td><td><span class="num">9</span></td></tr>
         <tr><td>人間へエスカレーションした実行</td><td><span class="num">5</span></td></tr>
         <tr><td>人間の承認を経てコミットした実行</td><td><span class="num">4</span></td></tr>
         <tr><td>人間の却下によるホールド</td><td><span class="num">1</span></td></tr>
@@ -2501,7 +2501,7 @@ img,svg { max-width: 100%; height: auto; }</style>
     <table>
       <thead><tr><th>site-id</th><th>名称</th><th>spectrum-license-status</th><th>site-access-record</th><th>台帳ファクト数</th><th>最新の判定</th></tr></thead>
       <tbody>
-        <tr><td><code>site-001</code></td><td>North Ridge Tower</td><td><span class="ok">:active</span></td><td><span class="ok">yes</span></td><td><span class="num">17</span></td><td><span class="critical">HARD hold · op-not-allowed</span></td></tr>
+        <tr><td><code>site-001</code></td><td>North Ridge Tower</td><td><span class="ok">:active</span></td><td><span class="ok">yes</span></td><td><span class="num">18</span></td><td><span class="critical">HARD hold · no-execution</span></td></tr>
         <tr><td><code>site-002</code></td><td>Harbor District Tower (license renewal pending)</td><td><span class="warn">:pending</span></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td><span class="critical">HARD hold · spectrum-license-not-active</span></td></tr>
         <tr><td><code>site-003</code></td><td>West Valley Tower (site-access not yet secured)</td><td><span class="ok">:active</span></td><td><span class="muted">no</span></td><td><span class="num">1</span></td><td><span class="critical">HARD hold · site-access-record-missing</span></td></tr>
       </tbody>
@@ -2511,33 +2511,34 @@ img,svg { max-width: 100%; height: auto; }</style>
     <h2>シナリオ実行（1 行 = 1 StateGraph run）</h2>
     <p class="muted">各行は実際の <code>langgraph.graph/run*</code> の戻り値から導出している。「HARD hold」は graph が <code>:request-approval</code> で一度も割り込まなかった実行 ＝ 人間に到達しなかったホールドを意味する。</p>
     <table>
-      <thead><tr><th>thread</th><th>phase</th><th>op</th><th>site</th><th>結果</th><th>gate reason</th><th>発火ルール</th><th>説明</th></tr></thead>
+      <thead><tr><th>thread</th><th>phase</th><th>advisor</th><th>op</th><th>site</th><th>結果</th><th>gate reason</th><th>発火ルール</th><th>説明</th></tr></thead>
       <tbody>
-        <tr><td><code>s01</code></td><td>phase-3</td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>登録済みサイトの建設記録ログ（governor clean → 自動コミット）</td></tr>
-        <tr><td><code>s02</code></td><td>phase-3</td><td><code>schedule-site-operation</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>点検作業のスケジュール（ルーチン調整 op）</td></tr>
-        <tr><td><code>s03</code></td><td>phase-3</td><td><code>activate-tower</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>spectrum-license-status :active の確認後に稼働開始</td></tr>
-        <tr><td><code>s04</code></td><td>phase-3</td><td><code>provision-subscriber</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>site-access-record 確認後の契約者収容</td></tr>
-        <tr><td><code>s05</code></td><td>phase-3</td><td><code>log-billing-record</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>利用実績エビデンスを引用した請求記録（:amount は指定せず advisor 既定値 0）</td></tr>
-        <tr><td><code>s06</code></td><td>phase-3</td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>rf-equipment 閾値 800 未満の発注 → エスカレーション不要</td></tr>
-        <tr><td><code>s07</code></td><td>phase-3</td><td><code>flag-network-fault</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>always-escalate</code></td><td><span class="muted">—</span></td><td>ネットワーク障害フラグは常に人間の承認が必要（always-escalate）</td></tr>
-        <tr><td><code>s08</code></td><td>phase-3</td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>always-escalate</code></td><td><span class="muted">—</span></td><td>backhaul-equipment 閾値 2000 超過 → 承認後にコミット</td></tr>
-        <tr><td><code>s09</code></td><td>phase-3</td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="warn">hold after human rejection</span></td><td><code>always-escalate</code></td><td><code>approver-rejected</code></td><td>同じく閾値超過だが、運用者が却下 → ホールド</td></tr>
-        <tr><td><code>s10</code></td><td>phase-0</td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>phase-0-simulation-only</code></td><td><span class="muted">—</span></td><td>phase-0（シミュレーション）では governor clean でも自動コミットしない</td></tr>
-        <tr><td><code>s11</code></td><td>phase-1</td><td><code>flag-network-fault</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>phase-1-always-escalate</code></td><td><span class="muted">—</span></td><td>phase-1 では always-escalate op が phase gate 側の理由で上がる</td></tr>
-        <tr><td><code>h01</code></td><td>phase-3</td><td><code>activate-tower</code></td><td><code>site-002</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>spectrum-license-not-active</code></td><td>site-002 の spectrum-license-status は :pending</td></tr>
-        <tr><td><code>h02</code></td><td>phase-3</td><td><code>provision-subscriber</code></td><td><code>site-003</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>site-access-record-missing</code></td><td>site-003 の site-access-record が未取得</td></tr>
-        <tr><td><code>h03</code></td><td>phase-3</td><td><code>log-network-build-record</code></td><td><code>site-999</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>site-not-registered</code></td><td>未登録サイト（store に無い site-id）</td></tr>
-        <tr><td><code>h04</code></td><td>phase-3</td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>build-record-invalid</code></td><td>設備数 0 は正の観測値ではない</td></tr>
-        <tr><td><code>h05</code></td><td>phase-3</td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>build-status-invalid</code></td><td>build-status "AAA+" はクローズド語彙に無い</td></tr>
-        <tr><td><code>h06</code></td><td>phase-3</td><td><code>log-billing-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>usage-evidence-missing</code></td><td>利用実績エビデンスの引用が空の請求記録</td></tr>
-        <tr><td><code>h07</code></td><td>phase-3</td><td><code>operate-tower-equipment</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>equipment-or-license-decision-blocked</code></td><td>基地局設備の直接操作は恒久ブロック</td></tr>
-        <tr><td><code>h08</code></td><td>phase-3</td><td><code>finalize-spectrum-license-decision</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>equipment-or-license-decision-blocked</code></td><td>周波数免許の付与/更新/取消判断の確定も恒久ブロック</td></tr>
-        <tr><td><code>h09</code></td><td>phase-3</td><td><code>dispatch-drone-survey</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>op-not-allowed</code></td><td>クローズド allowlist 外の op</td></tr>
+        <tr><td><code>s01</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>登録済みサイトの建設記録ログ（governor clean → 自動コミット）</td></tr>
+        <tr><td><code>s02</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>schedule-site-operation</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>点検作業のスケジュール（ルーチン調整 op）</td></tr>
+        <tr><td><code>s03</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>activate-tower</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>spectrum-license-status :active の確認後に稼働開始</td></tr>
+        <tr><td><code>s04</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>provision-subscriber</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>site-access-record 確認後の契約者収容</td></tr>
+        <tr><td><code>s05</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-billing-record</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>利用実績エビデンスを引用した請求記録（:amount は指定せず advisor 既定値 0）</td></tr>
+        <tr><td><code>s06</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="ok">auto-commit</span></td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td>rf-equipment 閾値 800 未満の発注 → エスカレーション不要</td></tr>
+        <tr><td><code>s07</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>flag-network-fault</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>always-escalate</code></td><td><span class="muted">—</span></td><td>ネットワーク障害フラグは常に人間の承認が必要（always-escalate）</td></tr>
+        <tr><td><code>s08</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>always-escalate</code></td><td><span class="muted">—</span></td><td>backhaul-equipment 閾値 2000 超過 → 承認後にコミット</td></tr>
+        <tr><td><code>s09</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>order-equipment</code></td><td><code>site-001</code></td><td><span class="warn">hold after human rejection</span></td><td><code>always-escalate</code></td><td><code>approver-rejected</code></td><td>同じく閾値超過だが、運用者が却下 → ホールド</td></tr>
+        <tr><td><code>s10</code></td><td>phase-0</td><td><span class="muted">mock</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>phase-0-simulation-only</code></td><td><span class="muted">—</span></td><td>phase-0（シミュレーション）では governor clean でも自動コミットしない</td></tr>
+        <tr><td><code>s11</code></td><td>phase-1</td><td><span class="muted">mock</span></td><td><code>flag-network-fault</code></td><td><code>site-001</code></td><td><span class="ok">human-approved commit</span></td><td><code>phase-1-always-escalate</code></td><td><span class="muted">—</span></td><td>phase-1 では always-escalate op が phase gate 側の理由で上がる</td></tr>
+        <tr><td><code>h01</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>activate-tower</code></td><td><code>site-002</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>spectrum-license-not-active</code></td><td>site-002 の spectrum-license-status は :pending</td></tr>
+        <tr><td><code>h02</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>provision-subscriber</code></td><td><code>site-003</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>site-access-record-missing</code></td><td>site-003 の site-access-record が未取得</td></tr>
+        <tr><td><code>h03</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-network-build-record</code></td><td><code>site-999</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>site-not-registered</code></td><td>未登録サイト（store に無い site-id）</td></tr>
+        <tr><td><code>h04</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>build-record-invalid</code></td><td>設備数 0 は正の観測値ではない</td></tr>
+        <tr><td><code>h05</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>build-status-invalid</code></td><td>build-status "AAA+" はクローズド語彙に無い</td></tr>
+        <tr><td><code>h06</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>log-billing-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>usage-evidence-missing</code></td><td>利用実績エビデンスの引用が空の請求記録</td></tr>
+        <tr><td><code>h07</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>operate-tower-equipment</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>equipment-or-license-decision-blocked</code></td><td>基地局設備の直接操作は恒久ブロック</td></tr>
+        <tr><td><code>h08</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>finalize-spectrum-license-decision</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>equipment-or-license-decision-blocked</code></td><td>周波数免許の付与/更新/取消判断の確定も恒久ブロック</td></tr>
+        <tr><td><code>h09</code></td><td>phase-3</td><td><span class="muted">mock</span></td><td><code>dispatch-drone-survey</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>op-not-allowed</code></td><td>クローズド allowlist 外の op</td></tr>
+        <tr><td><code>h10</code></td><td>phase-3</td><td><span class="critical">rogue (注入)</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">HARD hold (never reached a human)</span></td><td><span class="muted">—</span></td><td><code>no-execution</code></td><td>故障/侵害された advisor が :effect :actuate を主張（rogue advisor を同一 store に注入）</td></tr>
       </tbody>
     </table>
   </section>
   <section class="card">
-    <h2>HARD ホールド（9 件 / 8 ルール種別）</h2>
+    <h2>HARD ホールド（10 件 / 9 ルール種別）</h2>
     <p class="muted">Governor の hard violation は上書き不可・恒久。下表の「人間に到達」列が全て <span class="muted">no</span> であることが、これらが人間の判断を経ずにその場で止まった証拠。detail は Governor が実際に書いた文字列そのもの。</p>
     <table>
       <thead><tr><th>thread</th><th>op</th><th>site</th><th>rule</th><th>人間に到達</th><th>Governor の detail</th></tr></thead>
@@ -2551,6 +2552,7 @@ img,svg { max-width: 100%; height: auto; }</style>
         <tr><td><code>h07</code></td><td><code>operate-tower-equipment</code></td><td><code>site-001</code></td><td><span class="critical">equipment-or-license-decision-blocked</span></td><td><span class="muted">no</span></td><td>:operate-tower-equipment は基地局設備の直接操作、または周波数免許の付与/更新/取消判断の確定であり、恒久的にブロックされる -- サイト技術者/免許保有者の専権事項</td></tr>
         <tr><td><code>h08</code></td><td><code>finalize-spectrum-license-decision</code></td><td><code>site-001</code></td><td><span class="critical">equipment-or-license-decision-blocked</span></td><td><span class="muted">no</span></td><td>:finalize-spectrum-license-decision は基地局設備の直接操作、または周波数免許の付与/更新/取消判断の確定であり、恒久的にブロックされる -- サイト技術者/免許保有者の専権事項</td></tr>
         <tr><td><code>h09</code></td><td><code>dispatch-drone-survey</code></td><td><code>site-001</code></td><td><span class="critical">op-not-allowed</span></td><td><span class="muted">no</span></td><td>:dispatch-drone-survey はクローズドallowlist外の操作</td></tr>
+        <tr><td><code>h10</code></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td><span class="critical">no-execution</span></td><td><span class="muted">no</span></td><td>提案の :effect は :propose でなければならない -- governor は直接実行/作動を許可しない</td></tr>
       </tbody>
     </table>
   </section>
@@ -2625,13 +2627,14 @@ img,svg { max-width: 100%; height: auto; }</style>
         <tr><td><span class="num">18</span></td><td><span class="critical">governor-hold</span></td><td><code>operate-tower-equipment</code></td><td><code>site-001</code></td><td>hold</td><td><code>equipment-or-license-decision-blocked</code></td></tr>
         <tr><td><span class="num">19</span></td><td><span class="critical">governor-hold</span></td><td><code>finalize-spectrum-license-decision</code></td><td><code>site-001</code></td><td>hold</td><td><code>equipment-or-license-decision-blocked</code></td></tr>
         <tr><td><span class="num">20</span></td><td><span class="critical">governor-hold</span></td><td><code>dispatch-drone-survey</code></td><td><code>site-001</code></td><td>hold</td><td><code>op-not-allowed</code></td></tr>
+        <tr><td><span class="num">21</span></td><td><span class="critical">governor-hold</span></td><td><code>log-network-build-record</code></td><td><code>site-001</code></td><td>hold</td><td><code>no-execution</code></td></tr>
       </tbody>
     </table>
   </section>
 </main>
 <footer>
   <p>生成: <code>clojure -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.clj</code>）。実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない（<code>docs/business-model.md</code> Trust Controls）。</p>
-  <p>Governor の HARD ルールのうち <code>:no-execution</code> はこの実行では発火していない：同梱の <code>wirelesstelecom.advisor/mock-advisor</code> が常に <code>:effect :propose</code> を返すため、mock advisor 経由では構造的に到達できない（実 LLM advisor を挿した時に効くガード）。</p>
+  <p>Governor の HARD ルール <code>:no-execution</code> は、同梱の <code>wirelesstelecom.advisor/mock-advisor</code> が全分岐で <code>:effect :propose</code> を返すため通常経路では構造的に到達できない。この実行では <code>operation/build</code> が公開している <code>:advisor</code> シームから、<code>:effect :actuate</code>（実世界の作動）を主張する rogue advisor を<strong>同一 store に注入</strong>して実際に発火させている（thread <code>h10</code>）。故障・侵害・幻覚した intelligence 層が権限を得られないことを、散文の主張ではなく実行結果として示すための唯一の誠実な方法である。</p>
 </footer>
 </body>
 </html>
