@@ -192,14 +192,14 @@ and robot-dispatch backends.
 
 | File | Role |
 |---|---|
-| `src/wirelesstelecom/store.cljc` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + separate MSISDN-provisioning/service-suspension history. Both actuation ops act directly on a pre-seeded line, and the double-actuation guards check dedicated `:msisdn-provisioned?`/`:service-suspended?` booleans rather than a `:status` value |
-| `src/wirelesstelecom/registry.cljc` | MSISDN-provisioning + service-suspension draft records, plus `msisdn-invalid-format?` (mirrors `telecom.registry/e164-invalid-format?`, `cloud-itonami-isic-6190`, applied to a mobile MSISDN) |
-| `src/wirelesstelecom/facts.cljc` | Per-jurisdiction spectrum-licensing + subscriber-registration catalog with an official spec-basis citation per entry, honest coverage reporting |
+| `src/wirelesstelecom/store.cljk` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + separate MSISDN-provisioning/service-suspension history. Both actuation ops act directly on a pre-seeded line, and the double-actuation guards check dedicated `:msisdn-provisioned?`/`:service-suspended?` booleans rather than a `:status` value |
+| `src/wirelesstelecom/registry.cljk` | MSISDN-provisioning + service-suspension draft records, plus `msisdn-invalid-format?` (mirrors `telecom.registry/e164-invalid-format?`, `cloud-itonami-isic-6190`, applied to a mobile MSISDN) |
+| `src/wirelesstelecom/facts.cljk` | Per-jurisdiction spectrum-licensing + subscriber-registration catalog with an official spec-basis citation per entry, honest coverage reporting |
 | `src/wirelesstelecom/opsadvisor.cljc` | **Network Operations Advisor** -- `mock-advisor` ‖ `llm-advisor`; intake/verification/license-dispute-screening/MSISDN-provisioning/service-suspension proposals |
-| `src/wirelesstelecom/governor.cljc` | **Mobile Network Governor** -- 4 HARD checks (spec-basis · evidence-incomplete · MSISDN-format-invalid, pure ground-truth structural recompute · license-dispute-unresolved, unconditional evaluation) + already-provisioned/already-suspended guards + 1 soft (confidence/actuation gate) |
-| `src/wirelesstelecom/phase.cljc` | **Phase 0→3** -- read-only → assisted intake → assisted verify → supervised (both MSISDN provisioning and service suspension always human; line intake is the ONLY auto-eligible op, no direct capital risk) |
-| `src/wirelesstelecom/operation.cljc` | **OperationActor** -- langgraph-clj StateGraph |
-| `src/wirelesstelecom/sim.cljc` | demo driver |
+| `src/wirelesstelecom/governor.cljk` | **Mobile Network Governor** -- 4 HARD checks (spec-basis · evidence-incomplete · MSISDN-format-invalid, pure ground-truth structural recompute · license-dispute-unresolved, unconditional evaluation) + already-provisioned/already-suspended guards + 1 soft (confidence/actuation gate) |
+| `src/wirelesstelecom/phase.cljk` | **Phase 0→3** -- read-only → assisted intake → assisted verify → supervised (both MSISDN provisioning and service suspension always human; line intake is the ONLY auto-eligible op, no direct capital risk) |
+| `src/wirelesstelecom/operation.cljk` | **OperationActor** -- langgraph-clj StateGraph |
+| `src/wirelesstelecom/sim.cljk` | demo driver |
 | `test/wirelesstelecom/*_test.clj` | governor contract · phase invariants · store parity · registry conformance · facts coverage |
 
 ## Business-process coverage (honest)

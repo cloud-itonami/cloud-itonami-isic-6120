@@ -21,7 +21,7 @@
     - `\"AAA+\"` (unrecognized build-status), `:dispatch-drone-survey`
       (out-of-allowlist op), `\"meter-reading-2026-07\"` (usage
       evidence) and the 600 / 2200 order costs come from this repo's own
-      `test/wirelesstelecom/governor_test.cljc`
+      `test/wirelesstelecom/governor_test.cljk`
     - equipment categories + thresholds, build-status vocabulary and
       site-operation types are read at render time from
       `wirelesstelecom.facts`; the op allowlist, blocked ops,
@@ -598,7 +598,7 @@
 
      "</main>\n"
      "<footer>\n"
-     "  <p>生成: <code>clojure -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.clj</code>）。"
+     "  <p>生成: <code>clojure -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.cljk</code>）。"
      "実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。"
      "本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない"
      "（<code>docs/business-model.md</code> Trust Controls）。</p>\n"

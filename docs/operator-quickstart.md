@@ -36,7 +36,7 @@ Publish: enable GitHub Pages on `main` `/docs`, or any static host.
 ## 4. Where the Governor sits
 
 - Blueprint governor key: `mobile-network-governor`
-- Source path: `src/wirelesstelecom/governor.cljc` (ns `wirelesstelecom.governor`)
+- Source path: `src/wirelesstelecom/governor.cljk` (ns `wirelesstelecom.governor`)
 - Pattern: advise → govern → phase-gate → commit | escalate | hold (itonami actor / ADR-2607011000)
 
 ## 5. Claim / go-live

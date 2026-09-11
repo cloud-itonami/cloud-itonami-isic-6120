@@ -14,7 +14,7 @@
                         `langchain.db`'s `:db-api` (see langchain.kotoba-db).
 
   Both implement the same protocol and pass the same contract
-  (test/wirelesstelecom/store_contract_test.cljc).
+  (test/wirelesstelecom/store_contract_test.cljk).
 
   A registered site is the minimal unit of authority: a cell tower /
   base-station site must be registered before ANY proposal referencing

@@ -133,7 +133,7 @@ hand-rolling its own EDN-blob codec and Datomic plumbing
 
 `.github/workflows/ci.yml` (lint + test, sibling-checkout pattern for
 the `:local/root` deps, matching cloud-itonami-isic-0115/869/0111) and
-`test/wirelesstelecom/operation_test.cljc` (builds the REAL compiled
+`test/wirelesstelecom/operation_test.cljk` (builds the REAL compiled
 `langgraph.graph` StateGraph via `operation/build` and runs it via
 `langgraph.graph/run*` through commit / hard-hold (unregistered site /
 inactive spectrum license / missing site-access record) / escalate-
@@ -187,5 +187,5 @@ neither existed before this ADR.
   kotoba-lang/langgraph rename.
 - The compiled StateGraph (`operation/build`) is now proven end-to-end
   by a real test suite (49 tests / 183 assertions,
-  `test/wirelesstelecom/operation_test.cljc` included), not merely
+  `test/wirelesstelecom/operation_test.cljk` included), not merely
   present in source with no test ever having invoked it.
