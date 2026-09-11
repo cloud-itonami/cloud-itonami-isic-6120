@@ -1,5 +1,5 @@
 (ns wirelesstelecom.sim
-  "Demo driver -- `clojure -M:dev:run`. Walks a registered site through
+  "Demo driver -- `kbb -M:dev:run`. Walks a registered site through
   a clean phase-3 auto-commit, an always-escalate network-fault flag
   (human approves), a high-cost equipment order (human rejects), a
   structural spectrum-license hard hold (tower activation against a
@@ -105,7 +105,7 @@
     {:ledger (store/ledger st)}))
 
 (defn -main
-  "clojure -M:run entrypoint."
+  "kbb -M:run entrypoint."
   [& _args]
   (demo))
 

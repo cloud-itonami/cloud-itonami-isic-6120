@@ -2475,7 +2475,7 @@ img,svg { max-width: 100%; height: auto; }</style>
 <header class="bar">
   <h1>移動体通信インフラ運用コーディネーター（ISIC 6120） — Operator Console</h1>
   <p class="subtitle">cloud-itonami-isic-6120 · 読み取り専用サンプル · Mobile Network Governor 監査下</p>
-  <span class="badge">全ての数値は <code>clojure -M:dev:render-html</code> が実 actor（operation → governor → phase → store）を走らせて得た実行結果</span>
+  <span class="badge">全ての数値は <code>kbb -M:dev:render-html</code> が実 actor（operation → governor → phase → store）を走らせて得た実行結果</span>
 </header>
 <main>
   <section class="card">
@@ -2633,7 +2633,7 @@ img,svg { max-width: 100%; height: auto; }</style>
   </section>
 </main>
 <footer>
-  <p>生成: <code>clojure -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.cljk</code>）。実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない（<code>docs/business-model.md</code> Trust Controls）。</p>
+  <p>生成: <code>kbb -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.cljk</code>）。実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない（<code>docs/business-model.md</code> Trust Controls）。</p>
   <p>Governor の HARD ルール <code>:no-execution</code> は、同梱の <code>wirelesstelecom.advisor/mock-advisor</code> が全分岐で <code>:effect :propose</code> を返すため通常経路では構造的に到達できない。この実行では <code>operation/build</code> が公開している <code>:advisor</code> シームから、<code>:effect :actuate</code>（実世界の作動）を主張する rogue advisor を<strong>同一 store に注入</strong>して実際に発火させている（thread <code>h10</code>）。故障・侵害・幻覚した intelligence 層が権限を得られないことを、散文の主張ではなく実行結果として示すための唯一の誠実な方法である。</p>
 </footer>
 </body>
