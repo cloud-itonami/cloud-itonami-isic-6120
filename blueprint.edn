@@ -20,7 +20,7 @@
  :request-approval -> :commit / :hold) with
  `interrupt-before #{:request-approval}` + in-memory checkpointer for
  real human-in-the-loop resume, proven end-to-end by
- `test/wirelesstelecom/operation_test.cljc`. The primary entity is a
+ `test/wirelesstelecom/operation_test.cljk`. The primary entity is a
  registered SITE (cell tower / base station), analogous to a field in
  the sibling tobacco-growing coordinator (cloud-itonami-isic-0115) --
  the reference template this build follows -- carrying a structural
@@ -71,4 +71,4 @@
  points at the current `kotoba-lang/langgraph`/`langchain`/
  `langchain-store`; the Store uses `langchain-store.core`; CI
  (`.github/workflows/ci.yml`, sibling-checkout pattern) and
- `test/wirelesstelecom/operation_test.cljc` are added."}
+ `test/wirelesstelecom/operation_test.cljk` are added."}

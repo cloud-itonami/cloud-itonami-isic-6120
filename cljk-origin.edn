@@ -1,0 +1,21 @@
+{:format :kotoba.cljk-origin/v1
+ :renamed-on "2026-09-11"
+ :decision "adr-2609111500-cljk-rename-all-clojure-source (com-junkawasaki/root 90-docs/adr; owner instruction 2026-09-11)"
+ :rule "value = the extension the file had before the rename. A path ending in .clj.cljk or .cljs.cljk kept it in the name because both platform files existed (or the plain target was taken)."
+ :origins
+ {"src/wirelesstelecom/advisor.cljk" ".cljc"
+  "src/wirelesstelecom/facts.cljk" ".cljc"
+  "src/wirelesstelecom/governor.cljk" ".cljc"
+  "src/wirelesstelecom/operation.cljk" ".cljc"
+  "src/wirelesstelecom/phase.cljk" ".cljc"
+  "src/wirelesstelecom/registry.cljk" ".cljc"
+  "src/wirelesstelecom/render_html.cljk" ".clj"
+  "src/wirelesstelecom/sim.cljk" ".cljc"
+  "src/wirelesstelecom/store.cljk" ".cljc"
+  "test/wirelesstelecom/facts_test.cljk" ".cljc"
+  "test/wirelesstelecom/governor_test.cljk" ".cljc"
+  "test/wirelesstelecom/operation_test.cljk" ".cljc"
+  "test/wirelesstelecom/phase_test.cljk" ".cljc"
+  "test/wirelesstelecom/registry_test.cljk" ".cljc"
+  "test/wirelesstelecom/store_contract_test.cljk" ".cljc"
+  "test/wirelesstelecom/store_test.cljk" ".cljc"}}
