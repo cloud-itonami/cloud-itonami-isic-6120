@@ -181,8 +181,8 @@ neither existed before this ADR.
   fee schedule. Extending real per-jurisdiction coverage remains
   legitimate future work, gated on actual verification per Decision 3.
 - `deps.edn` resolves against this workspace's current sibling
-  checkouts; CI actually exercises `clojure -M:dev:test` and
-  `clojure -M:dev:run` against a fresh sibling-checkout, not a stale
+  checkouts; CI actually exercises `kbb -M:dev:test` and
+  `kbb -M:dev:run` against a fresh sibling-checkout, not a stale
   path that would fail on any clone made after the langgraph-clj →
   kotoba-lang/langgraph rename.
 - The compiled StateGraph (`operation/build`) is now proven end-to-end

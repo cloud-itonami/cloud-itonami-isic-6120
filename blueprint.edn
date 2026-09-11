@@ -39,9 +39,9 @@
  `:finalize-spectrum-license-decision`) -- direct radio/tower-equipment
  actuation and spectrum-license grant/renewal/revocation decisions stay
  categorically outside this back-office coordinator's authority, no
- override. 49 tests / 183 assertions green (`clojure -M:dev:test`),
+ override. 49 tests / 183 assertions green (`kbb -M:dev:test`),
  clj-kondo 0 errors, demo runnable end-to-end against both Store
- backends (`clojure -M:dev:run`).
+ backends (`kbb -M:dev:run`).
 
  CORRECTION HISTORY (see `docs/adr/0002-site-spectrum-scope-
  correction.md`): an earlier same-day implementation attempt on this

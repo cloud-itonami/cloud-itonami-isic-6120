@@ -43,7 +43,7 @@
   governor hold -- a console that shows no real hold would be
   indistinguishable from a hand-written mock.
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [clojure.java.io :as io]
             [kotoba.lang.text :as str]
@@ -502,7 +502,7 @@
      "<header class=\"bar\">\n"
      "  <h1>移動体通信インフラ運用コーディネーター（ISIC 6120） — Operator Console</h1>\n"
      "  <p class=\"subtitle\">cloud-itonami-isic-6120 · 読み取り専用サンプル · Mobile Network Governor 監査下</p>\n"
-     "  <span class=\"badge\">全ての数値は <code>clojure -M:dev:render-html</code> が実 actor（operation → governor → phase → store）を走らせて得た実行結果</span>\n"
+     "  <span class=\"badge\">全ての数値は <code>kbb -M:dev:render-html</code> が実 actor（operation → governor → phase → store）を走らせて得た実行結果</span>\n"
      "</header>\n"
      "<main>\n"
 
@@ -598,7 +598,7 @@
 
      "</main>\n"
      "<footer>\n"
-     "  <p>生成: <code>clojure -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.cljk</code>）。"
+     "  <p>生成: <code>kbb -M:dev:render-html</code>（<code>src/wirelesstelecom/render_html.cljk</code>）。"
      "実 actor 実行の出力のみを描画する決定論的ジェネレータ —— 同じ seed なら常にバイト一致する。"
      "本ページはサンプルであり、実運用の加入者データやサイト機微情報は含まない"
      "（<code>docs/business-model.md</code> Trust Controls）。</p>\n"
