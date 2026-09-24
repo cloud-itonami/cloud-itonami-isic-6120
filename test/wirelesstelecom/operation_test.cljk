@@ -11,7 +11,7 @@
   (cloud-itonami-isic-0115). This namespace did not exist in the prior
   implementation attempt on this repo -- the compiled graph had never
   actually been exercised end-to-end before this fix."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [langgraph.graph :as g]
             [wirelesstelecom.operation :as operation]
             [wirelesstelecom.store :as store]))

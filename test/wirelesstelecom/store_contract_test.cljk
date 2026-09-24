@@ -1,7 +1,7 @@
 (ns wirelesstelecom.store-contract-test
   "MemStore ≡ DatomicStore parity for the Store protocol. Mirrors
   `tobaccoops.store-contract-test` (cloud-itonami-isic-0115)."
-  (:require [clojure.test :refer [deftest is]]
+  (:require [kotoba.test :refer [deftest is]]
             [wirelesstelecom.store :as store]))
 
 (defn- exercise [s]

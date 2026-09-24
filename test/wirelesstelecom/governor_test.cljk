@@ -1,5 +1,5 @@
 (ns wirelesstelecom.governor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [wirelesstelecom.governor :as gov]
             [wirelesstelecom.store :as store]))
 
