@@ -1,0 +1,35 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README "Robotics premise": for a wireless telecommunications operator
+;; (ISIC 6120) robots do tower/antenna deployment, base-station maintenance
+;; and site inspection, gated by the independent Mobile Network Governor
+;; (tower-climb and high-voltage work need human sign-off). Physical work
+;; modelled here: an arm offering a panel antenna up to its mounting pole,
+;; and the solar heat load through the wall of the outdoor base-station
+;; cabinet the inspection robot surveys.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-6120"
+ :cases
+ [{:id :panel-antenna-to-pole
+   :kind :manipulator
+   :procedure "deployment arm lifts a sector panel antenna from the platform deck and offers it up to the mounting brackets on the pole"
+   :params {:l1-m 1.00 :l2-m 0.90 :m1-kg 18.0 :m2-kg 12.0
+            :from [1.10 -0.20] :to [0.60 1.40] :duration-s 3.0 :steps 500}
+   :sweep {:param :payload-kg :values [10.0 20.0 30.0 40.0 50.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 900.0 :basis "estimate: continuous shoulder torque of a ~40 kg-payload arm class"}
+   :boundary {:lo 1.0 :hi 150.0}}
+  {:id :bts-cabinet-solar-wall
+   :kind :thermal
+   :procedure "insulated wall of the outdoor base-station cabinet under afternoon sun (65 C sol-air on the skin), inner air held at 25 C by the cooling unit"
+   :params {:conductivity-w-mk 0.03 :density-kg-m3 40.0 :specific-heat-j-kgk 1400.0
+            :t0-c 25.0 :t-hot-c 65.0 :h-front-w-m2k 20.0 :t-back-ambient-c 25.0 :h-back-w-m2k 5.0
+            :threshold-c 30.0 :duration-s 28800.0 :nodes 11}
+   :sweep {:param :thickness-m :values [0.02 0.03 0.05 0.08 0.10]}
+   :quantity :peak-back-c
+   :limit {:max 30.0 :basis "estimate: the inner wall must stay within 5 K of the 25 C battery-string rating so the cooling unit is not overrun"}
+   :boundary {:lo 0.01 :hi 0.12}}]}
