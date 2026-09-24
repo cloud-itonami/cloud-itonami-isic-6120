@@ -1,5 +1,5 @@
 (ns wirelesstelecom.registry-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [wirelesstelecom.registry :as registry]))
 
 (deftest cost-exceeds-threshold-test
