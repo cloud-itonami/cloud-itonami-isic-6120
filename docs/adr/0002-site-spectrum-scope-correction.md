@@ -52,7 +52,7 @@ Separately (not scope errors, but defects): `deps.edn` pointed at
 `../../com-junkawasaki/langgraph-clj` / `langchain-clj`, paths that no
 longer exist locally (those libraries were transferred+renamed to
 `kotoba-lang/langgraph` / `langchain`, matching every sibling
-`cloud-itonami-isic-*` actor's current `deps.edn` -- see CLAUDE.md
+`cloud-itonami-isic-*` actor's current `deps.edn` -- see AGENTS.md
 "Repo naming -- no `-clj` suffix"); `wirelesstelecom.store` hand-rolled
 its own `enc`/`dec*` EDN-blob codec and Datomic schema/pull/tx plumbing
 instead of using `kotoba-lang/langchain-store` (ADR-2607141600); there

@@ -3,7 +3,7 @@
  ;; all .cljc -> portable to JVM / SCI / ClojureScript / GraalVM). It lives
  ;; in the kotoba-lang org of this workspace (transferred + renamed from
  ;; com-junkawasaki/langgraph-clj / com-junkawasaki/langchain-clj -- see
- ;; CLAUDE.md "Repo naming -- no -clj suffix"). This repo is standalone
+ ;; AGENTS.md "Repo naming -- no -clj suffix"). This repo is standalone
  ;; (forkable outside the workspace); the :local/root paths only resolve
  ;; inside the monorepo checkout -- a standalone fork should override them
  ;; with git coordinates.
@@ -17,7 +17,7 @@
  ;; helpers, ADR-2607141600) is added so `wirelesstelecom.store` stops
  ;; hand-rolling its own enc/dec.
  ;; `jp-go-digital-design-system` (DADS -- デジタル庁デザインシステム) is
- ;; the workspace-wide base design system (CLAUDE.md "UI/UX 標準"); it is
+ ;; the workspace-wide base design system (AGENTS.md "UI/UX 標準"); it is
  ;; pinned by git sha rather than :local/root because the generated
  ;; `docs/samples/operator-console.html` must be reproducible outside
  ;; this monorepo checkout too.
